@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "workspace"
+version = "0.1.0"
+description = ""
+authors = ["Rafael Arias <45745870+rafael-ariascalles@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+dagster = ""
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
