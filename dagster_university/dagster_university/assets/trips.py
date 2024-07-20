@@ -3,6 +3,7 @@ from . import constants
 from dagster import asset
 import duckdb
 import os
+from dagster_duckdb import DuckDBResource
 
 @asset
 def taxi_trips_file() -> None:
@@ -24,7 +25,7 @@ def taxi_zone_file() -> None:
         output_file.write(taxi_zones.content)
 
 @asset(deps=["taxi_trips_file"])
-def taxi_trips() -> None:
+def taxi_trips(database: DuckDBResource) -> None:
     """
       The raw taxi trips dataset, loaded into a DuckDB database
     """
@@ -44,13 +45,15 @@ def taxi_trips() -> None:
           from 'data/raw/taxi_trips_2023-03.parquet'
         );
     """
-    conn = duckdb.connect(os.getenv("DUCKDB_DATABASE"))
-    conn.execute(sql_query)
+    #conn = duckdb.connect(os.getenv("DUCKDB_DATABASE"))
+    #conn.execute(sql_query)
+    with database.get_connection() as conn:
+      conn.execute(sql_query)
 
 
 
 @asset(deps=["taxi_zone_file"])
-def taxi_zones() -> None:
+def taxi_zones(database: DuckDBResource) -> None:
     """
       The taxi zone dataset, loaded into a DuckDB database
     """
@@ -64,5 +67,7 @@ def taxi_zones() -> None:
           from 'data/raw/taxi_zones.csv'
         );
     """
-    conn = duckdb.connect(os.getenv("DUCKDB_DATABASE"))
-    conn.execute(sql_query)
+    #conn = duckdb.connect(os.getenv("DUCKDB_DATABASE"))
+    #conn.execute(sql_query)
+    with database.get_connection() as conn:
+      conn.execute(sql_query)
